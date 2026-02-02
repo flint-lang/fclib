@@ -7,21 +7,12 @@
 #undef FCLIB_IMPLEMENTATION
 #endif
 
-// If `FCLIB_STRIP_PREFIXES` is defined then the `fclib_` prefix is dropped
-#ifdef FCLIB_STRIP_PREFIXES
-#define fclib_str_t str_t
-#define fclib_str_create str_create
-#define fclib_str_init str_init
-#define fclib_str_assign str_assign
-#define fclib_str_assign_lit str_assign_lit
-#define fclib_str_compare str_compare
-#define fclib_str_equals str_equals
-#define fclib_str_append str_append
-#define fclib_str_append_lit str_append_lit
-#define fclib_str_add str_add
-#define fclib_str_add_lit_str str_add_lit_str
-#define fclib_str_add_str_lit str_add_str_lit
-#define fclib_str_get_slice str_get_slice
+#ifndef FCLIB_API
+#define FCLIB_API
+#endif
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 #include <stdbool.h>
@@ -47,7 +38,7 @@ typedef struct fclib_str_t {
 ///
 /// @param `len` The length of the string to create
 /// @return `str_t *` A pointer to the newly created string with the given len
-fclib_str_t *fclib_str_create(const size_t len);
+FCLIB_API fclib_str_t *fclib_str_create(const size_t len);
 
 /// @function `str_init`
 /// @brief Initializes a given string by creating a new string of size `len` and
@@ -59,7 +50,7 @@ fclib_str_t *fclib_str_create(const size_t len);
 /// @param `value` The value to initialize the string from
 /// @param `len` The length of the new string to initialize
 /// @return `str_t *` A pointer to the initialized string
-fclib_str_t *fclib_str_init(const char *value, const size_t len);
+FCLIB_API fclib_str_t *fclib_str_init(const char *value, const size_t len);
 
 /// @function `str_assign`
 /// @brief Assigns the given `value` to the given `string` by first freeing
@@ -69,7 +60,7 @@ fclib_str_t *fclib_str_init(const char *value, const size_t len);
 ///
 /// @param `string` The string variable to assign the value to
 /// @param `value` The value to assign to the given string variable
-void fclib_str_assign(fclib_str_t **string, fclib_str_t *value);
+FCLIB_API void fclib_str_assign(fclib_str_t **string, fclib_str_t *value);
 
 /// @function `str_assign_lit`
 /// @brief Assigns the given `value` of the given `len` to the `string`
@@ -80,10 +71,10 @@ void fclib_str_assign(fclib_str_t **string, fclib_str_t *value);
 /// @param `string` The variable to assign the newly created string to
 /// @param `value` The value from which to initialize the new string
 /// @param `len` The length of the newly initialized string
-void fclib_str_assign_lit( //
-    fclib_str_t **string,  //
-    const char *value,     //
-    const size_t len       //
+FCLIB_API void fclib_str_assign_lit( //
+    fclib_str_t **string,            //
+    const char *value,               //
+    const size_t len                 //
 );
 
 /// @function `str_compare`
@@ -96,7 +87,10 @@ void fclib_str_assign_lit( //
 ///     -1: The lhs is "smaller" than the rhs, for example lhs="ab" and rhs="ba"
 ///      0: The lhs and rhs are equal both in their lengths and their content
 ///      1: The lhs is "larger" than the rhs, for example lhs="ba" and rhs="ab"
-int32_t fclib_str_compare(const fclib_str_t *lhs, const fclib_str_t *rhs);
+FCLIB_API int32_t fclib_str_compare( //
+    const fclib_str_t *lhs,          //
+    const fclib_str_t *rhs           //
+);
 
 /// @function `str_equals`
 /// @brief Compares to strings and returns whether they are equal both in size
@@ -105,7 +99,7 @@ int32_t fclib_str_compare(const fclib_str_t *lhs, const fclib_str_t *rhs);
 /// @param `lhs` The string on the left side of the comparison
 /// @param `rhs` The string on the right side of the comparison
 /// @return `bool` Whether the strings are equal in their size and content
-bool fclib_str_equals(const fclib_str_t *lhs, const fclib_str_t *rhs);
+FCLIB_API bool fclib_str_equals(const fclib_str_t *lhs, const fclib_str_t *rhs);
 
 /// @function `str_append`
 /// @brief Appends the `source` string to the `dest` string, the `dest` needs to
@@ -113,7 +107,7 @@ bool fclib_str_equals(const fclib_str_t *lhs, const fclib_str_t *rhs);
 ///
 /// @param `dest` The pointer to the variable holding the string to append to
 /// @param `source` The pointer to the string to append to the `dest`
-void fclib_str_append(fclib_str_t **dest, const fclib_str_t *source);
+FCLIB_API void fclib_str_append(fclib_str_t **dest, const fclib_str_t *source);
 
 /// @function `str_append_lit`
 /// @brief Appends the `source` string of length `source_len` to the `dest`
@@ -127,10 +121,10 @@ void fclib_str_append(fclib_str_t **dest, const fclib_str_t *source);
 /// characters to the `dest` string
 /// @param `source_len` The amount of characters to append from `source` to
 /// `dest`
-void fclib_str_append_lit(  //
-    fclib_str_t **dest,     //
-    const char *source,     //
-    const size_t source_len //
+FCLIB_API void fclib_str_append_lit( //
+    fclib_str_t **dest,              //
+    const char *source,              //
+    const size_t source_len          //
 );
 
 /// @function `str_add`
@@ -141,7 +135,10 @@ void fclib_str_append_lit(  //
 /// @param `rhs` The right side of the addition
 /// @return `str_t *` The newly created string containing both the `lhs` and
 /// `rhs`
-fclib_str_t *fclib_str_add(const fclib_str_t *lhs, const fclib_str_t *rhs);
+FCLIB_API fclib_str_t *fclib_str_add( //
+    const fclib_str_t *lhs,           //
+    const fclib_str_t *rhs            //
+);
 
 /// @function `str_add_lit_str`
 /// @brief Prepends the data `lhs` of size `lhs_len` to the `rhs` string and
@@ -151,10 +148,10 @@ fclib_str_t *fclib_str_add(const fclib_str_t *lhs, const fclib_str_t *rhs);
 /// @param `lhs_len` The length of the data to prepend to the `rhs` string
 /// @param `rhs` The string the `lhs` data of size `lhs_len` is prepended at
 /// @return `str_t *` The addition of the `lhs` data and the `rhs` string
-fclib_str_t *fclib_str_add_lit_str( //
-    const char *lhs,                //
-    const size_t lhs_len,           //
-    const fclib_str_t *rhs          //
+FCLIB_API fclib_str_t *fclib_str_add_lit_str( //
+    const char *lhs,                          //
+    const size_t lhs_len,                     //
+    const fclib_str_t *rhs                    //
 );
 
 /// @function `str_add_str_lit`
@@ -165,10 +162,10 @@ fclib_str_t *fclib_str_add_lit_str( //
 /// @param `rhs` The data which is appended to the `lhs` string
 /// @param `rhs_len` The length of the data to append at the `lhs` string
 /// @return `str_t *` The addition of the `lhs` string and the `rhs` data
-fclib_str_t *fclib_str_add_str_lit( //
-    const fclib_str_t *lhs,         //
-    const char *rhs,                //
-    const size_t rhs_len            //
+FCLIB_API fclib_str_t *fclib_str_add_str_lit( //
+    const fclib_str_t *lhs,                   //
+    const char *rhs,                          //
+    const size_t rhs_len                      //
 );
 
 /// @function `str_get_slice`
@@ -179,11 +176,84 @@ fclib_str_t *fclib_str_add_str_lit( //
 /// @param `to` The exclusive index at which the slicing ends
 /// @return `str_t *` A new string created from the data [`from`..`to`) of the
 /// `src` string
-fclib_str_t *fclib_str_get_slice( //
-    const fclib_str_t *src,       //
-    const size_t from,            //
-    const size_t to               //
+FCLIB_API fclib_str_t *fclib_str_get_slice( //
+    const fclib_str_t *src,                 //
+    const size_t from,                      //
+    const size_t to                         //
 );
+
+// #define FCLIB_STRIP_PREFIXES // Uncomment for debugging purposes
+#ifdef FCLIB_STRIP_PREFIXES
+// Inline-wrappers that forward to the non-stripped function. This is needed
+// because if we would just do a "dumb" `#define fclib_str_create str_create`
+// then we would also rename all the implementations and then we would have a
+// potential symbol mismatch between translation units if in one TU the prefixes
+// have been stripped but in the other one they have not. This way there exists
+// 0 chance of different symbols in the different TUs, since the "stripped"
+// functions are just inline-wrappers and they *should* disappear entirely at
+// compile-time.
+typedef fclib_str_t str_t;
+
+FCLIB_API static inline str_t *str_create(const size_t len) {
+    return fclib_str_create(len);
+}
+FCLIB_API static inline str_t *str_init(const char *value, const size_t len) {
+    return fclib_str_init(value, len);
+}
+FCLIB_API static inline void str_assign(str_t **string, str_t *value) {
+    fclib_str_assign(string, value);
+}
+FCLIB_API static inline void str_assign_lit( //
+    str_t **string,                          //
+    const char *value,                       //
+    const size_t len                         //
+) {
+    fclib_str_assign_lit(string, value, len);
+}
+FCLIB_API static inline int32_t str_compare( //
+    const str_t *lhs,                        //
+    const str_t *rhs                         //
+) {
+    return fclib_str_compare(lhs, rhs);
+}
+FCLIB_API static inline bool str_equals(const str_t *lhs, const str_t *rhs) {
+    return fclib_str_equals(lhs, rhs);
+}
+FCLIB_API static inline void str_append(str_t **dest, const str_t *source) {
+    fclib_str_append(dest, source);
+}
+FCLIB_API static inline void str_append_lit( //
+    str_t **dest,                            //
+    const char *source,                      //
+    const size_t source_len                  //
+) {
+    fclib_str_append_lit(dest, source, source_len);
+}
+FCLIB_API static inline str_t *str_add(const str_t *lhs, const str_t *rhs) {
+    return fclib_str_add(lhs, rhs);
+}
+FCLIB_API static inline str_t *str_add_lit_str( //
+    const char *lhs,                            //
+    const size_t lhs_len,                       //
+    const str_t *rhs                            //
+) {
+    return fclib_str_add_lit_str(lhs, lhs_len, rhs);
+}
+FCLIB_API static inline str_t *str_add_str_lit( //
+    const str_t *lhs,                           //
+    const char *rhs,                            //
+    const size_t rhs_len                        //
+) {
+    return fclib_str_add_str_lit(lhs, rhs, rhs_len);
+}
+FCLIB_API static inline str_t *str_get_slice( //
+    const str_t *src,                         //
+    const size_t from,                        //
+    const size_t to                           //
+) {
+    return fclib_str_get_slice(src, from, to);
+}
+#endif // endof FCLIB_STRIP_PREFIXES
 
 /// @macro `STR_DECL`
 /// @brief This macro is used to quickly declare a variable of name `var` with
@@ -251,31 +321,35 @@ fclib_str_t *fclib_str_get_slice( //
 ///         ADD_LIT_STR("Hello", world);
 #define ADD_LIT_STR(lhs, rhs) fclib_str_add_lit_str(lhs, strlen(lhs), rhs)
 
-#define FCLIB_STR_IMPLEMENTATION // Uncomment for debugging purposes
+#ifdef __cplusplus
+}
+#endif
+
+// #define FCLIB_STR_IMPLEMENTATION // Uncomment for debugging purposes
 #ifdef FCLIB_STR_IMPLEMENTATION
 
-fclib_str_t *fclib_str_create(const size_t len) {
+FCLIB_API fclib_str_t *fclib_str_create(const size_t len) {
     fclib_str_t *string = (fclib_str_t *)malloc(sizeof(fclib_str_t) + len + 1);
     string->len = len;
     string->value[len] = 0;
     return string;
 }
 
-fclib_str_t *fclib_str_init(const char *value, const size_t len) {
+FCLIB_API fclib_str_t *fclib_str_init(const char *value, const size_t len) {
     fclib_str_t *string = fclib_str_create(len);
     memcpy(string->value, value, len);
     return string;
 }
 
-void fclib_str_assign(fclib_str_t **string, fclib_str_t *value) {
+FCLIB_API void fclib_str_assign(fclib_str_t **string, fclib_str_t *value) {
     free(*string);
     *string = value;
 }
 
-void fclib_str_assign_lit( //
-    fclib_str_t **string,  //
-    const char *value,     //
-    const size_t len       //
+FCLIB_API void fclib_str_assign_lit( //
+    fclib_str_t **string,            //
+    const char *value,               //
+    const size_t len                 //
 ) {
     fclib_str_t *new_string =
         (fclib_str_t *)realloc(*string, sizeof(fclib_str_t) + len + 1);
@@ -286,7 +360,10 @@ void fclib_str_assign_lit( //
     new_string->value[len] = 0;
 }
 
-int32_t fclib_str_compare(const fclib_str_t *lhs, const fclib_str_t *rhs) {
+FCLIB_API int32_t fclib_str_compare( //
+    const fclib_str_t *lhs,          //
+    const fclib_str_t *rhs           //
+) {
     if (lhs->len < rhs->len) {
         return -1;
     } else if (lhs->len > rhs->len) {
@@ -296,11 +373,14 @@ int32_t fclib_str_compare(const fclib_str_t *lhs, const fclib_str_t *rhs) {
     return memcmp(lhs->value, rhs->value, lhs->len);
 }
 
-bool fclib_str_equals(const fclib_str_t *lhs, const fclib_str_t *rhs) {
+FCLIB_API bool fclib_str_equals( //
+    const fclib_str_t *lhs,      //
+    const fclib_str_t *rhs       //
+) {
     return fclib_str_compare(lhs, rhs) == 0;
 }
 
-void fclib_str_append(fclib_str_t **dest, const fclib_str_t *source) {
+FCLIB_API void fclib_str_append(fclib_str_t **dest, const fclib_str_t *source) {
     fclib_str_t *new_dest = (fclib_str_t *)realloc(*dest,
         sizeof(fclib_str_t) + (*dest)->len + source->len + 1);
     *dest = new_dest;
@@ -311,10 +391,10 @@ void fclib_str_append(fclib_str_t **dest, const fclib_str_t *source) {
     new_dest->value[new_len] = 0;
 }
 
-void fclib_str_append_lit(  //
-    fclib_str_t **dest,     //
-    const char *source,     //
-    const size_t source_len //
+FCLIB_API void fclib_str_append_lit( //
+    fclib_str_t **dest,              //
+    const char *source,              //
+    const size_t source_len          //
 ) {
     fclib_str_t *new_dest = (fclib_str_t *)realloc(*dest,
         sizeof(fclib_str_t) + (*dest)->len + source_len + 1);
@@ -326,17 +406,20 @@ void fclib_str_append_lit(  //
     new_dest->value[new_len] = 0;
 }
 
-fclib_str_t *fclib_str_add(const fclib_str_t *lhs, const fclib_str_t *rhs) {
+FCLIB_API fclib_str_t *fclib_str_add( //
+    const fclib_str_t *lhs,           //
+    const fclib_str_t *rhs            //
+) {
     fclib_str_t *result = fclib_str_create(lhs->len + rhs->len);
     memcpy(result->value, lhs->value, lhs->len);
     memcpy(result->value + lhs->len, rhs->value, rhs->len);
     return result;
 }
 
-fclib_str_t *fclib_str_add_lit_str( //
-    const char *lhs,                //
-    const size_t lhs_len,           //
-    const fclib_str_t *rhs          //
+FCLIB_API fclib_str_t *fclib_str_add_lit_str( //
+    const char *lhs,                          //
+    const size_t lhs_len,                     //
+    const fclib_str_t *rhs                    //
 ) {
     fclib_str_t *result = fclib_str_create(lhs_len + rhs->len);
     memcpy(result->value, lhs, lhs_len);
@@ -344,10 +427,10 @@ fclib_str_t *fclib_str_add_lit_str( //
     return result;
 }
 
-fclib_str_t *fclib_str_add_str_lit( //
-    const fclib_str_t *lhs,         //
-    const char *rhs,                //
-    const size_t rhs_len            //
+FCLIB_API fclib_str_t *fclib_str_add_str_lit( //
+    const fclib_str_t *lhs,                   //
+    const char *rhs,                          //
+    const size_t rhs_len                      //
 ) {
     fclib_str_t *result = fclib_str_create(lhs->len + rhs_len);
     memcpy(result->value, lhs->value, lhs->len);
@@ -355,10 +438,10 @@ fclib_str_t *fclib_str_add_str_lit( //
     return result;
 }
 
-fclib_str_t *fclib_str_get_slice( //
-    const fclib_str_t *src,       //
-    const size_t from,            //
-    const size_t to               //
+FCLIB_API fclib_str_t *fclib_str_get_slice( //
+    const fclib_str_t *src,                 //
+    const size_t from,                      //
+    const size_t to                         //
 ) {
     size_t real_to = to == 0 ? src->len : to;
     if (real_to > src->len) {
@@ -385,4 +468,4 @@ fclib_str_t *fclib_str_get_slice( //
     return fclib_str_init(src->value, len);
 }
 
-#endif
+#endif // endof FCLIB_STR_IMPLEMENTATION
