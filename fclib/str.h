@@ -241,7 +241,35 @@ FCLIB_API fclib_str_t *fclib_str_get_slice( //
 ///         ADD_LIT_STR("Hello", world);
 #define ADD_LIT_STR(lhs, rhs) fclib_str_add_lit_str(lhs, strlen(lhs), rhs)
 
-// #define FCLIB_STRIP_PREFIXES // Uncomment for debugging purposes
+// FCLIB_MINIMAL controls whether to *only* emit symbols which are actually
+// present in Flint too or to add additional functionality useful for C. If
+// FCLIB_MINIMAL is defined then only the minimal functions, types etc present
+// in Flint too are emitted. By default the library provides all additional
+// features useful for C developement too, so these additional features are
+// opt-out, not opt-in
+#ifndef FCLIB_MINIMAL
+/// @typedef `str_view_t`
+/// @brief A string view into a string which is a non-owning reference to that
+/// string. It is used whenever string-based operations need to be done when one
+/// does not want to rely on string creation and deletion churn. A string view
+/// can easily be converted to a "proper" string and vice versa. The string view
+/// is a 16-byte structure to be easily-copyable on SystemV-based systems
+/// (16-byte rule)
+typedef struct fclib_str_view_t {
+    size_t len;
+    char *value;
+} fclib_str_view_t;
+
+/// @function `str_view_from_string`
+/// @brief Creates a new string view into an already existing string
+///
+/// @param `src` The source string to get a view to
+/// @return `str_view_t` A view into the given source string
+FCLIB_API fclib_str_view_t fclib_str_view_from_string(fclib_str_t *const src);
+
+#endif // endof FCLIB_MINIMAL
+
+#define FCLIB_STRIP_PREFIXES // Uncomment for debugging purposes
 #ifdef FCLIB_STRIP_PREFIXES
 // Inline-wrappers that forward to the non-stripped function. This is needed
 // because if we would just do a "dumb" `#define fclib_str_create str_create`
@@ -312,13 +340,23 @@ FCLIB_API static inline str_t *str_get_slice( //
 ) {
     return fclib_str_get_slice(src, from, to);
 }
+
+// FCLIB_MINIMAL STRIPPED START
+#ifndef FCLIB_MINIMAL
+typedef fclib_str_view_t str_view_t;
+
+FCLIB_API static inline str_view_t str_view_from_string(str_t *const src) {
+    return fclib_str_view_from_string(src);
+}
+
+#endif // endof FCLIB_MINIMAL
 #endif // endof FCLIB_STRIP_PREFIXES
 
 #ifdef __cplusplus
 }
 #endif
 
-// #define FCLIB_IMPLEMENTATION // Uncomment for debugging purposes
+#define FCLIB_IMPLEMENTATION // Uncomment for debugging purposes
 #ifdef FCLIB_IMPLEMENTATION
 
 FCLIB_API fclib_str_t *fclib_str_create(const size_t len) {
@@ -461,4 +499,15 @@ FCLIB_API fclib_str_t *fclib_str_get_slice( //
     return fclib_str_init(src->value, len);
 }
 
+// FCLIB_MINIMAL START IMPLEMENTATION
+#ifndef FCLIB_MINIMAL
+
+FCLIB_API fclib_str_view_t fclib_str_view_from_string(str_t *const src) {
+    return (fclib_str_view_t){
+        .len = src->len,
+        .value = src->value,
+    };
+}
+
+#endif // endof FCLIB_MINIMAL
 #endif // endof FCLIB_IMPLEMENTATION
