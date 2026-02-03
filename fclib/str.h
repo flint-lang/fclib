@@ -182,6 +182,72 @@ FCLIB_API fclib_str_t *fclib_str_get_slice( //
     const size_t to                         //
 );
 
+/// @macro `STR_DECL`
+/// @brief This macro is used to quickly declare a variable of name `var` with
+/// the string literal `rhs`. It is very handy because often times you want to
+/// initialize strings from literals
+///
+/// @param `var` The name of the variable to declare
+/// @param `rhs` The content to store in the string variable
+///
+/// @example You can easily write `STR_DECL(string, "Hello, World!");` which
+/// counts the characters in the provided string for you and calls the
+/// `str_init` function to initialize a new string which contains *exactly* the
+/// provided literal.
+#define STR_DECL(var, rhs) str *var = fclib_str_init(rhs, strlen(rhs))
+
+/// @macro `STR_ASSIGN`
+/// @brief This macro is used to assign a `rhs` value to a variable `var`. The
+/// `rhs` can either be a string itself or a literal.
+///
+/// @param `var` The name of the variable to assign to
+/// @param `rhs` The value to assign to the variable, could be both a literal or
+/// a different string variable
+///
+/// @example
+///     - Assigns the string "Hello, World" to the variable `string`:
+///         STR_ASSIGN(string, "Hello, World!");
+///
+///     - Assigns the string stored in the variable `other_string` to the
+///       variable `string`:
+///         STR_ASSIGN(string, other_string);
+#define STR_ASSIGN(var, rhs)                                                   \
+    do {                                                                       \
+        __typeof__(rhs) _temp_rhs = (rhs);                                     \
+        if (__builtin_types_compatible_p(__typeof__(_temp_rhs), str *) ||      \
+            __builtin_types_compatible_p(__typeof__(_temp_rhs),                \
+                const str *)) {                                                \
+            fclib_str_assign(&(var), (str *)_temp_rhs);                        \
+        } else {                                                               \
+            fclib_str_assign_lit(&(var), (const char *)_temp_rhs,              \
+                strlen((const char *)_temp_rhs));                              \
+        }                                                                      \
+    } while (0)
+
+/// @macro `ADD_STR_LIT`
+/// @brief Simple wrapper around the `str_add_str_lit` function which simply
+/// calls `strlen` on the provided literal to add to the string variable
+///
+/// @param `lhs` The string variable to append the `rhs` literal to
+/// @param `rhs` The literal to append to the `lhs` string variable
+///
+/// @example
+///     - Adds the strings `hello` and ", World!" together:
+///         ADD_STR_LIT(hello, ", World!");
+#define ADD_STR_LIT(lhs, rhs) fclib_str_add_str_lit(lhs, rhs, strlen(rhs))
+
+/// @macro `ADD_LIT_STR`
+/// @brief Simple wrapper around the `str_add_lit_str` function which simply
+/// calls `strlen` on the provided literal to prepend to the string variable
+///
+/// @param `lhs` The literal to prepend to the `rhs` string variable
+/// @param `rhs` The string variable to prepend the `lhs` literal to
+///
+/// @example
+///     - Adds the strings "Hello" and whatever is stored in `world` together:
+///         ADD_LIT_STR("Hello", world);
+#define ADD_LIT_STR(lhs, rhs) fclib_str_add_lit_str(lhs, strlen(lhs), rhs)
+
 // #define FCLIB_STRIP_PREFIXES // Uncomment for debugging purposes
 #ifdef FCLIB_STRIP_PREFIXES
 // Inline-wrappers that forward to the non-stripped function. This is needed
@@ -254,72 +320,6 @@ FCLIB_API static inline str_t *str_get_slice( //
     return fclib_str_get_slice(src, from, to);
 }
 #endif // endof FCLIB_STRIP_PREFIXES
-
-/// @macro `STR_DECL`
-/// @brief This macro is used to quickly declare a variable of name `var` with
-/// the string literal `rhs`. It is very handy because often times you want to
-/// initialize strings from literals
-///
-/// @param `var` The name of the variable to declare
-/// @param `rhs` The content to store in the string variable
-///
-/// @example You can easily write `STR_DECL(string, "Hello, World!");` which
-/// counts the characters in the provided string for you and calls the
-/// `str_init` function to initialize a new string which contains *exactly* the
-/// provided literal.
-#define STR_DECL(var, rhs) str *var = fclib_str_init(rhs, strlen(rhs))
-
-/// @macro `STR_ASSIGN`
-/// @brief This macro is used to assign a `rhs` value to a variable `var`. The
-/// `rhs` can either be a string itself or a literal.
-///
-/// @param `var` The name of the variable to assign to
-/// @param `rhs` The value to assign to the variable, could be both a literal or
-/// a different string variable
-///
-/// @example
-///     - Assigns the string "Hello, World" to the variable `string`:
-///         STR_ASSIGN(string, "Hello, World!");
-///
-///     - Assigns the string stored in the variable `other_string` to the
-///       variable `string`:
-///         STR_ASSIGN(string, other_string);
-#define STR_ASSIGN(var, rhs)                                                   \
-    do {                                                                       \
-        __typeof__(rhs) _temp_rhs = (rhs);                                     \
-        if (__builtin_types_compatible_p(__typeof__(_temp_rhs), str *) ||      \
-            __builtin_types_compatible_p(__typeof__(_temp_rhs),                \
-                const str *)) {                                                \
-            fclib_str_assign(&(var), (str *)_temp_rhs);                        \
-        } else {                                                               \
-            fclib_str_assign_lit(&(var), (const char *)_temp_rhs,              \
-                strlen((const char *)_temp_rhs));                              \
-        }                                                                      \
-    } while (0)
-
-/// @macro `ADD_STR_LIT`
-/// @brief Simple wrapper around the `str_add_str_lit` function which simply
-/// calls `strlen` on the provided literal to add to the string variable
-///
-/// @param `lhs` The string variable to append the `rhs` literal to
-/// @param `rhs` The literal to append to the `lhs` string variable
-///
-/// @example
-///     - Adds the strings `hello` and ", World!" together:
-///         ADD_STR_LIT(hello, ", World!");
-#define ADD_STR_LIT(lhs, rhs) fclib_str_add_str_lit(lhs, rhs, strlen(rhs))
-
-/// @macro `ADD_LIT_STR`
-/// @brief Simple wrapper around the `str_add_lit_str` function which simply
-/// calls `strlen` on the provided literal to prepend to the string variable
-///
-/// @param `lhs` The literal to prepend to the `rhs` string variable
-/// @param `rhs` The string variable to prepend the `lhs` literal to
-///
-/// @example
-///     - Adds the strings "Hello" and whatever is stored in `world` together:
-///         ADD_LIT_STR("Hello", world);
-#define ADD_LIT_STR(lhs, rhs) fclib_str_add_lit_str(lhs, strlen(lhs), rhs)
 
 #ifdef __cplusplus
 }
