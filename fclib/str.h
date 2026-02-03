@@ -269,7 +269,7 @@ FCLIB_API fclib_str_view_t fclib_str_view_from_string(fclib_str_t *const src);
 
 #endif // endof FCLIB_MINIMAL
 
-#define FCLIB_STRIP_PREFIXES // Uncomment for debugging purposes
+// #define FCLIB_STRIP_PREFIXES // Uncomment for debugging purposes
 #ifdef FCLIB_STRIP_PREFIXES
 // Inline-wrappers that forward to the non-stripped function. This is needed
 // because if we would just do a "dumb" `#define fclib_str_create str_create`
@@ -356,7 +356,7 @@ FCLIB_API static inline str_view_t str_view_from_string(str_t *const src) {
 }
 #endif
 
-#define FCLIB_IMPLEMENTATION // Uncomment for debugging purposes
+// #define FCLIB_IMPLEMENTATION // Uncomment for debugging purposes
 #ifdef FCLIB_IMPLEMENTATION
 
 FCLIB_API fclib_str_t *fclib_str_create(const size_t len) {
@@ -502,7 +502,7 @@ FCLIB_API fclib_str_t *fclib_str_get_slice( //
 // FCLIB_MINIMAL START IMPLEMENTATION
 #ifndef FCLIB_MINIMAL
 
-FCLIB_API fclib_str_view_t fclib_str_view_from_string(str_t *const src) {
+FCLIB_API fclib_str_view_t fclib_str_view_from_string(fclib_str_t *const src) {
     return (fclib_str_view_t){
         .len = src->len,
         .value = src->value,

@@ -318,7 +318,7 @@ FCLIB_API static inline void arr_assign_val_at( //
 }
 #endif
 
-// #define FCLIB_IMPLEMENTATION // Uncomment for debug purposes
+// #define FCLIB_IMPLEMENTATION // Uncomment for debugging purposes
 #ifdef FCLIB_IMPLEMENTATION
 
 FCLIB_API fclib_arr_t *fclib_arr_create( //
