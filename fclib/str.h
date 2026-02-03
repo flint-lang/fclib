@@ -187,7 +187,7 @@ FCLIB_API fclib_str_t *fclib_str_get_slice( //
 /// counts the characters in the provided string for you and calls the
 /// `str_init` function to initialize a new string which contains *exactly* the
 /// provided literal.
-#define STR_DECL(var, rhs) str *var = fclib_str_init(rhs, strlen(rhs))
+#define STR_DECL(var, rhs) fclib_str_t *var = fclib_str_init(rhs, strlen(rhs))
 
 /// @macro `STR_ASSIGN`
 /// @brief This macro is used to assign a `rhs` value to a variable `var`. The
@@ -210,7 +210,7 @@ FCLIB_API fclib_str_t *fclib_str_get_slice( //
         if (__builtin_types_compatible_p(__typeof__(_temp_rhs), str *) ||      \
             __builtin_types_compatible_p(__typeof__(_temp_rhs),                \
                 const str *)) {                                                \
-            fclib_str_assign(&(var), (str *)_temp_rhs);                        \
+            fclib_str_assign(&(var), (fclib_str *)_temp_rhs);                  \
         } else {                                                               \
             fclib_str_assign_lit(&(var), (const char *)_temp_rhs,              \
                 strlen((const char *)_temp_rhs));                              \
