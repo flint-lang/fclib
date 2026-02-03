@@ -1,12 +1,5 @@
 #pragma once
 
-// Define a header-local implementation macro to prevent inlining the
-// implementation of potentially cross-included fclib headers
-#ifdef FCLIB_IMPLEMENTATION
-#define FCLIB_ARR_IMPLEMENTATION
-#undef FCLIB_IMPLEMENTATION
-#endif
-
 #ifndef FCLIB_API
 #define FCLIB_API
 #endif
@@ -325,8 +318,8 @@ FCLIB_API static inline void arr_assign_val_at( //
 }
 #endif
 
-// #define FCLIB_ARR_IMPLEMENTATION // Uncomment for debug purposes
-#ifdef FCLIB_ARR_IMPLEMENTATION
+// #define FCLIB_IMPLEMENTATION // Uncomment for debug purposes
+#ifdef FCLIB_IMPLEMENTATION
 
 FCLIB_API fclib_arr_t *fclib_arr_create( //
     const size_t dimensionality,         //
@@ -764,4 +757,4 @@ FCLIB_API void fclib_arr_assign_val_at( //
     memcpy(element, &value, element_size);
 }
 
-#endif // endof FCLIB_ARR_IMPLEMENTATION
+#endif // endof FCLIB_IMPLEMENTATION

@@ -1,12 +1,5 @@
 #pragma once
 
-// Define a header-local implementation macro to prevent inlining the
-// implementation of potentially cross-included fclib headers
-#ifdef FCLIB_IMPLEMENTATION
-#define FCLIB_STR_IMPLEMENTATION
-#undef FCLIB_IMPLEMENTATION
-#endif
-
 #ifndef FCLIB_API
 #define FCLIB_API
 #endif
@@ -325,8 +318,8 @@ FCLIB_API static inline str_t *str_get_slice( //
 }
 #endif
 
-// #define FCLIB_STR_IMPLEMENTATION // Uncomment for debugging purposes
-#ifdef FCLIB_STR_IMPLEMENTATION
+// #define FCLIB_IMPLEMENTATION // Uncomment for debugging purposes
+#ifdef FCLIB_IMPLEMENTATION
 
 FCLIB_API fclib_str_t *fclib_str_create(const size_t len) {
     fclib_str_t *string = (fclib_str_t *)malloc(sizeof(fclib_str_t) + len + 1);
@@ -468,4 +461,4 @@ FCLIB_API fclib_str_t *fclib_str_get_slice( //
     return fclib_str_init(src->value, len);
 }
 
-#endif // endof FCLIB_STR_IMPLEMENTATION
+#endif // endof FCLIB_IMPLEMENTATION
