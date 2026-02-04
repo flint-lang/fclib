@@ -26,6 +26,7 @@ extern "C" {
 #endif
 #endif
 
+#include "arr.h"
 #include "str.h"
 
 #include <stdio.h>
@@ -114,6 +115,14 @@ FCLIB_API void fclib_system_start_capture(void);
 /// @return `str_t *` The captured output as a string
 FCLIB_API fclib_str_t *fclib_system_end_capture(void);
 
+/// @function `system_end_capture_lines`
+/// @brief Stops capturing output, restores stdout/stderr, and returns the
+/// unified captured content (stdout + stderr interleaved) as an array of
+/// strings where each string is the line excluding the `\n` symbol at the end
+///
+/// @return `arr_t *` The captured output as an array of strings
+FCLIB_API fclib_arr_t *fclib_system_end_capture_lines(void);
+
 // #define FCLIB_STRIP_PREFIXES // Uncomment for debugging purposes
 #ifdef FCLIB_STRIP_PREFIXES
 
@@ -156,13 +165,17 @@ FCLIB_API fclib_str_t *system_end_capture(void) {
     return fclib_system_end_capture();
 }
 
+FCLIB_API fclib_arr_t *system_end_capture_lines(void) {
+    return fclib_system_end_capture_lines();
+}
+
 #endif // endof FCLIB_STRIP_PREFIXES
 
 #ifdef __cplusplus
 }
 #endif
 
-// #define FCLIB_IMPLEMENTATION // Uncomment for debugging purposes
+#define FCLIB_IMPLEMENTATION // Uncomment for debugging purposes
 #ifdef FCLIB_IMPLEMENTATION
 
 FCLIB_API fclib_command_result_t fclib_system_command( //
@@ -392,6 +405,74 @@ FCLIB_API fclib_str_t *fclib_system_end_capture(void) {
     capture_file = NULL;
 
     return captured;
+}
+
+FCLIB_API fclib_arr_t *fclib_system_end_capture_lines(void) {
+    // Union type to be able to bitcast a pointer to an integer
+    typedef union fclib_ptr_bitcast_t {
+        fclib_str_t *ptr;
+        size_t bits;
+    } fclib_ptr_bitcast_t;
+
+    size_t line_count = 0;
+    if (capture_file == NULL) {
+        // Not capturing; return empty array
+        return fclib_arr_create(1, sizeof(fclib_str_t *), &line_count);
+    }
+
+    // End the capture and get it as a single string
+    fclib_str_t *captured_buffer = fclib_system_end_capture();
+    // Check how many lines there are in the captured buffer
+    char *const captured_buffer_value = captured_buffer->value;
+    size_t last_newline = 0;
+    for (size_t i = 0; i < captured_buffer->len; i++) {
+        if (captured_buffer_value[i] == '\n') {
+            line_count++;
+            last_newline = i;
+        }
+    }
+    const bool contains_trailing_line = last_newline + 1 < captured_buffer->len;
+    if (contains_trailing_line) {
+        line_count++;
+    }
+    // Create the output array
+    fclib_arr_t *output_array = fclib_arr_create( //
+        1, sizeof(fclib_str_t *), &line_count     //
+    );
+    // Go through the buffer and create new strings and store them in the output
+    // array
+    size_t output_id = 0;
+    size_t line_start = 0;
+    for (size_t i = 0; i < captured_buffer->len; i++) {
+        if (captured_buffer_value[i] == '\n') {
+            fclib_str_t *line_string = fclib_str_get_slice( //
+                captured_buffer, line_start, i              //
+            );
+            fclib_ptr_bitcast_t cast = (fclib_ptr_bitcast_t){
+                .ptr = line_string,
+            };
+            fclib_arr_assign_val_at(                 //
+                output_array, sizeof(fclib_str_t *), //
+                &output_id, cast.bits                //
+            );
+            line_start = i + 1;
+            output_id++;
+        }
+    }
+    if (contains_trailing_line) {
+        fclib_str_t *line_string = fclib_str_get_slice(       //
+            captured_buffer, line_start, captured_buffer->len //
+        );
+        fclib_ptr_bitcast_t cast = (fclib_ptr_bitcast_t){
+            .ptr = line_string,
+        };
+        fclib_arr_assign_val_at(                 //
+            output_array, sizeof(fclib_str_t *), //
+            &output_id, cast.bits                //
+        );
+    }
+    free(captured_buffer);
+    return output_array;
 }
 
 #endif // endof FCLIB_IMPLEMENTATION
