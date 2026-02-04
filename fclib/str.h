@@ -496,7 +496,9 @@ FCLIB_API fclib_str_t *fclib_str_get_slice( //
         real_from = real_to - 1;
     }
     const size_t len = real_to - real_from;
-    return fclib_str_init(src->value, len);
+    fclib_str_t *result = fclib_str_create(len);
+    memcpy(result->value, src->value + real_from, len);
+    return result;
 }
 
 // FCLIB_MINIMAL START IMPLEMENTATION
