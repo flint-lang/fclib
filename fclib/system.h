@@ -445,9 +445,11 @@ FCLIB_API fclib_arr_t *fclib_system_end_capture_lines(void) {
     size_t line_start = 0;
     for (size_t i = 0; i < captured_buffer->len; i++) {
         if (captured_buffer_value[i] == '\n') {
-            fclib_str_t *line_string = fclib_str_get_slice( //
-                captured_buffer, line_start, i              //
-            );
+            fclib_str_t *line_string = i == line_start //
+                ? fclib_str_create(0)                  //
+                : fclib_str_get_slice(                 //
+                      captured_buffer, line_start, i   //
+                  );                                   //
             fclib_ptr_bitcast_t cast = (fclib_ptr_bitcast_t){
                 .ptr = line_string,
             };
