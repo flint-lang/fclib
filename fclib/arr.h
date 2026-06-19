@@ -162,7 +162,7 @@ FCLIB_API void fclib_arr_fill_val( //
 /// @param `element_size` The size of each element in bytes
 /// @param `indices` The position of the element to access
 /// @return `char *` Pointer to the element
-FCLIB_API char *fclib_arr_access( //
+FCLIB_API void *fclib_arr_access( //
     fclib_arr_t *arr,             //
     const size_t element_size,    //
     const size_t *indices         //
@@ -282,7 +282,7 @@ FCLIB_API static inline void arr_fill_val( //
 ) {
     fclib_arr_fill_val(arr, element_size, value);
 }
-FCLIB_API static inline char *arr_access( //
+FCLIB_API static inline void *arr_access( //
     arr_t *arr,                           //
     const size_t element_size,            //
     const size_t *indices                 //
@@ -698,7 +698,7 @@ FCLIB_API void fclib_arr_fill_val( //
     }
 }
 
-FCLIB_API char *fclib_arr_access( //
+FCLIB_API void *fclib_arr_access( //
     fclib_arr_t *arr,             //
     const size_t element_size,    //
     const size_t *indices         //
@@ -731,7 +731,7 @@ FCLIB_API size_t fclib_arr_access_val( //
     const size_t element_size,         //
     const size_t *indices              //
 ) {
-    char *element = fclib_arr_access(arr, element_size, indices);
+    void *element = fclib_arr_access(arr, element_size, indices);
     size_t value;
     memcpy(&value, element, element_size);
     return value;
@@ -743,7 +743,7 @@ FCLIB_API void fclib_arr_assign_at( //
     const size_t *indices,          //
     const void *value               //
 ) {
-    char *element = fclib_arr_access(arr, element_size, indices);
+    void *element = fclib_arr_access(arr, element_size, indices);
     memcpy(element, value, element_size);
 }
 
@@ -753,7 +753,7 @@ FCLIB_API void fclib_arr_assign_val_at( //
     const size_t *indices,              //
     const size_t value                  //
 ) {
-    char *element = fclib_arr_access(arr, element_size, indices);
+    void *element = fclib_arr_access(arr, element_size, indices);
     memcpy(element, &value, element_size);
 }
 
