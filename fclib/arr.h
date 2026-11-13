@@ -9,8 +9,7 @@ extern "C" {
 #endif
 
 #ifndef FCLIB_ALIGNCAST
-#define FCLIB_ALIGNCAST(to_type, value_ptr)                                    \
-    (to_type *)__builtin_assume_aligned(value_ptr, _Alignof(to_type))
+#define FCLIB_ALIGNCAST(to_type, value_ptr) (to_type *)__builtin_assume_aligned(value_ptr, _Alignof(to_type))
 #endif
 
 #include "str.h"
@@ -335,8 +334,7 @@ FCLIB_API fclib_arr_t *fclib_arr_create( //
     }
 
     // Allocate memory for the str struct + its array
-    fclib_arr_t *arr =
-        (fclib_arr_t *)malloc(total_size + arr_len * element_size);
+    fclib_arr_t *arr = (fclib_arr_t *)malloc(total_size + arr_len * element_size);
 
     // Set the dimensionality (len field)
     arr->len = dimensionality;
@@ -368,8 +366,7 @@ FCLIB_API void fclib_arr_fill_seq( //
 
     // Fill all the other elements by copying the last element over to the next
     for (size_t i = 1; i < total_elements; i++) {
-        memcpy(data_start + (i * element_size),
-            data_start + ((i - 1) * element_size), element_size);
+        memcpy(data_start + (i * element_size), data_start + ((i - 1) * element_size), element_size);
     }
 }
 
@@ -396,9 +393,7 @@ FCLIB_API void fclib_arr_fill_exp( //
     size_t filled = 1;
     while (filled < total_elements) {
         // Determine how much to copy in this iteration
-        size_t to_copy = (filled <= total_elements - filled)
-            ? filled
-            : total_elements - filled;
+        size_t to_copy = (filled <= total_elements - filled) ? filled : total_elements - filled;
         // Copy from the beginning of the array to the next unfilled portion
         memcpy(                                   //
             data_start + (filled * element_size), // dest
@@ -534,8 +529,7 @@ FCLIB_API fclib_arr_t *fclib_arr_get_slice( //
 
     // We need to iterate through all combinations of the ranges
     // This is a recursive-like problem, but we'll do it iteratively
-    size_t *current_indices =
-        (size_t *)malloc(src_dimensionality * sizeof(size_t));
+    size_t *current_indices = (size_t *)malloc(src_dimensionality * sizeof(size_t));
 
     // Initialize indices to the start of each range/index
     for (size_t i = 0; i < src_dimensionality; i++) {
@@ -573,8 +567,7 @@ FCLIB_API fclib_arr_t *fclib_arr_get_slice( //
         }
 
         // Copy the chunk (chunk_size elements)
-        memcpy(dest_data + dest_index * element_size,
-            src_data + src_offset * element_size, chunk_size * element_size);
+        memcpy(dest_data + dest_index * element_size, src_data + src_offset * element_size, chunk_size * element_size);
         dest_index += chunk_size;
     }
 
@@ -646,19 +639,15 @@ FCLIB_API void fclib_arr_fill_inline( //
         // Exponential fill
         size_t filled = 1;
         while (filled < total_elements) {
-            size_t to_copy = (filled <= total_elements - filled)
-                ? filled
-                : total_elements - filled;
-            memcpy(data_start + (filled * element_size), data_start,
-                to_copy * element_size);
+            size_t to_copy = (filled <= total_elements - filled) ? filled : total_elements - filled;
+            memcpy(data_start + (filled * element_size), data_start, to_copy * element_size);
             filled += to_copy;
         }
         return;
     }
     // Sequential fill
     for (size_t i = 1; i < total_elements; i++) {
-        memcpy(data_start + (i * element_size),
-            data_start + ((i - 1) * element_size), element_size);
+        memcpy(data_start + (i * element_size), data_start + ((i - 1) * element_size), element_size);
     }
 }
 
@@ -682,19 +671,15 @@ FCLIB_API void fclib_arr_fill_val( //
         // Exponential fill
         size_t filled = 1;
         while (filled < total_elements) {
-            size_t to_copy = (filled <= total_elements - filled)
-                ? filled
-                : total_elements - filled;
-            memcpy(data_start + (filled * element_size), data_start,
-                to_copy * element_size);
+            size_t to_copy = (filled <= total_elements - filled) ? filled : total_elements - filled;
+            memcpy(data_start + (filled * element_size), data_start, to_copy * element_size);
             filled += to_copy;
         }
         return;
     }
     // Sequential fill
     for (size_t i = 1; i < total_elements; i++) {
-        memcpy(data_start + (i * element_size),
-            data_start + ((i - 1) * element_size), element_size);
+        memcpy(data_start + (i * element_size), data_start + ((i - 1) * element_size), element_size);
     }
 }
 
@@ -721,8 +706,7 @@ FCLIB_API void *fclib_arr_access( //
     }
 
     // Calculate the pointer to the desired element
-    char *data_start =
-        (char *)(dim_lengths + dimensionality); // Skip the dimension lengths
+    char *data_start = (char *)(dim_lengths + dimensionality); // Skip the dimension lengths
     return data_start + offset * element_size;
 }
 

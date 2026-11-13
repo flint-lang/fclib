@@ -9,8 +9,7 @@ extern "C" {
 #endif
 
 #ifndef FCLIB_ALIGNCAST
-#define FCLIB_ALIGNCAST(to_type, value_ptr)                                    \
-    (to_type *)__builtin_assume_aligned(value_ptr, _Alignof(to_type))
+#define FCLIB_ALIGNCAST(to_type, value_ptr) (to_type *)__builtin_assume_aligned(value_ptr, _Alignof(to_type))
 #endif
 
 #ifdef __WIN32__

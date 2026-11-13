@@ -204,17 +204,15 @@ FCLIB_API fclib_str_t *fclib_str_get_slice( //
 ///     - Assigns the string stored in the variable `other_string` to the
 ///       variable `string`:
 ///         STR_ASSIGN(string, other_string);
-#define STR_ASSIGN(var, rhs)                                                   \
-    do {                                                                       \
-        __typeof__(rhs) _temp_rhs = (rhs);                                     \
-        if (__builtin_types_compatible_p(__typeof__(_temp_rhs), str *) ||      \
-            __builtin_types_compatible_p(__typeof__(_temp_rhs),                \
-                const str *)) {                                                \
-            fclib_str_assign(&(var), (fclib_str *)_temp_rhs);                  \
-        } else {                                                               \
-            fclib_str_assign_lit(&(var), (const char *)_temp_rhs,              \
-                strlen((const char *)_temp_rhs));                              \
-        }                                                                      \
+#define STR_ASSIGN(var, rhs)                                                                                           \
+    do {                                                                                                               \
+        __typeof__(rhs) _temp_rhs = (rhs);                                                                             \
+        if (__builtin_types_compatible_p(__typeof__(_temp_rhs), str *) ||                                              \
+            __builtin_types_compatible_p(__typeof__(_temp_rhs), const str *)) {                                        \
+            fclib_str_assign(&(var), (fclib_str *)_temp_rhs);                                                          \
+        } else {                                                                                                       \
+            fclib_str_assign_lit(&(var), (const char *)_temp_rhs, strlen((const char *)_temp_rhs));                    \
+        }                                                                                                              \
     } while (0)
 
 /// @macro `ADD_STR_LIT`
@@ -382,8 +380,7 @@ FCLIB_API void fclib_str_assign_lit( //
     const char *value,               //
     const size_t len                 //
 ) {
-    fclib_str_t *new_string =
-        (fclib_str_t *)realloc(*string, sizeof(fclib_str_t) + len + 1);
+    fclib_str_t *new_string = (fclib_str_t *)realloc(*string, sizeof(fclib_str_t) + len + 1);
     *string = new_string;
 
     new_string->len = len;
@@ -412,8 +409,7 @@ FCLIB_API bool fclib_str_equals( //
 }
 
 FCLIB_API void fclib_str_append(fclib_str_t **dest, const fclib_str_t *source) {
-    fclib_str_t *new_dest = (fclib_str_t *)realloc(*dest,
-        sizeof(fclib_str_t) + (*dest)->len + source->len + 1);
+    fclib_str_t *new_dest = (fclib_str_t *)realloc(*dest, sizeof(fclib_str_t) + (*dest)->len + source->len + 1);
     *dest = new_dest;
 
     memcpy(new_dest->value + new_dest->len, source->value, source->len);
@@ -427,8 +423,7 @@ FCLIB_API void fclib_str_append_lit( //
     const char *source,              //
     const size_t source_len          //
 ) {
-    fclib_str_t *new_dest = (fclib_str_t *)realloc(*dest,
-        sizeof(fclib_str_t) + (*dest)->len + source_len + 1);
+    fclib_str_t *new_dest = (fclib_str_t *)realloc(*dest, sizeof(fclib_str_t) + (*dest)->len + source_len + 1);
     *dest = new_dest;
 
     memcpy(new_dest->value + new_dest->len, source, source_len);
